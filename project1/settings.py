@@ -33,7 +33,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "web-production-3179.up.railway.app",  # your Railway backend URL
+    "web-production-b36d45.up.railway.app",  # your Railway backend URL
     "chem-backend-92pt.onrender.com",  # your Render backend URL
 ]
 
