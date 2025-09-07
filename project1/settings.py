@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "web-production-b36d45.up.railway.app",  # your Railway backend URL
-    "chem-backend-92pt.onrender.com",  # your Render backend URL
+    "chem-backend.up.railway.app",  
 ]
 
 
@@ -96,10 +96,19 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://chem-backend.up.railway.app",   # backend URL
+    "https://web-production-b36d45.up.railway.app",  # frontend URL
+    "https://your-frontend.netlify.app",     # if deployed on Netlify
+]
+
+
 CORS_ALLOWED_ORIGINS = [
     # "http://localhost:5000",
     "http://localhost:5173",
     "https://chem-frontend.netlify.app",
+    "https://chem-backend.up.railway.app",   # backend URL
+    "https://web-production-b36d45.up.railway.app",  # frontend URL
 ]
 
 CORS_ALLOW_METHODS = [
