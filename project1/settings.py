@@ -30,7 +30,11 @@ SECRET_KEY = 'django-insecure-&+pu(cg==3(1zm@w7@a8(sefvxc3i)8zixk9+bbi^+)&+w2i@l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "chem-backend-92pt.onrender.com",  # your Render backend URL
+]
 
 
 # Application definition
