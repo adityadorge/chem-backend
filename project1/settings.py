@@ -94,6 +94,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     # "http://localhost:5000",
     "http://localhost:5173",
+    "https://chem-frontend.netlify.app",
 ]
 
 CORS_ALLOW_METHODS = [
