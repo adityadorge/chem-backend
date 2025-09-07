@@ -1,0 +1,175 @@
+-- Users Table
+CREATE TABLE Users (
+    User_ID INT PRIMARY KEY AUTO_INCREMENT,
+    FullName VARCHAR(255) NOT NULL,
+    --Username VARCHAR(255) UNIQUE NOT NULL, # user can login using email & Password
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    Password_Hash TEXT NOT NULL,
+    Phone VARCHAR(20),
+    Address TEXT,
+    UserRole ENUM('User', 'Admin') DEFAULT 'User',
+    Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Updated_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Sessions Table
+CREATE TABLE Sessions (
+    Session_ID INT AUTO_INCREMENT PRIMARY KEY,
+    User_ID INT NOT NULL,
+    Login_Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Logout_Time TIMESTAMP NULL,
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE
+);
+CREATE TABLE LoginAttempts (
+    Attempt_ID INT PRIMARY KEY AUTO_INCREMENT,
+    User_ID INT NOT NULL,
+    IP_Address VARCHAR(50),
+    Status VARCHAR(10) CHECK (Status IN ('Success', 'Failure')),
+    Attempt_Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+);
+-- Password Resets Table
+CREATE TABLE PasswordResets (
+    Reset_ID INT PRIMARY KEY AUTO_INCREMENT,
+    User_ID INT NOT NULL,
+    Reset_Token TEXT NOT NULL,
+    Expires_At TIMESTAMP NOT NULL,
+    Requested_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE
+);
+
+-- Roles Table
+CREATE TABLE Roles (
+    Role_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Role_Name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- User Roles Table (Mapping Users to Roles)
+CREATE TABLE User_Roles (
+    User_ID INT NOT NULL,
+    Role_ID INT NOT NULL,
+    PRIMARY KEY (User_ID, Role_ID),
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE,
+    FOREIGN KEY (Role_ID) REFERENCES Roles(Role_ID) ON DELETE CASCADE
+);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Test Table
+CREATE TABLE Tests (
+    Test_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Test_Name VARCHAR(255) NOT NULL,
+    Test_Description TEXT,
+    Category_ID INT,
+    Test_Price DECIMAL(10,2) NOT NULL,
+    Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Updated_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (Category_ID) REFERENCES Categories(Category_ID) ON DELETE SET NULL,
+);
+
+-- Categories Table
+CREATE TABLE Categories (
+    Category_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Category_Name VARCHAR(255) NOT NULL UNIQUE,
+    Description TEXT,
+    Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Updated_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create subcategories table
+CREATE TABLE subcategories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Category_ID INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    information TEXT,
+    icon VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+-- Check Test availability Table
+CREATE TABLE TestAvailability (
+    Availability_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Test_ID INT NOT NULL,
+    Lab_ID INT NOT NULL,
+    Test_Status ENUM('In Stock', 'Out of Stock', 'Pre-Order', 'Discontinued') DEFAULT 'In Stock',
+    LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (Test_ID) REFERENCES Tests(Test_ID) ON DELETE CASCADE,
+    FOREIGN KEY (Lab_ID) REFERENCES Labs(Lab_ID) ON DELETE CASCADE
+);
+
+-- Suppliers Table
+CREATE TABLE Labs (
+    Lab_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Lab_Name VARCHAR(255) NOT NULL,
+    Contact_Name VARCHAR(255),
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Phone VARCHAR(20),
+    Address TEXT NOT NULL
+);
+
+-- Shopping Sessions Table
+CREATE TABLE ShoppingSessions (
+    ShoppingSessions_ID INT PRIMARY KEY AUTO_INCREMENT,
+    User_ID INT,
+    Session_Token VARCHAR(255) UNIQUE NOT NULL,
+    Status ENUM('Active', 'Expired', 'Converted') DEFAULT 'Active',
+    Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Expires_At TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL 1 DAY), 
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE SET NULL
+);
+
+-- Cart Table
+CREATE TABLE Cart (
+    Cart_ID INT PRIMARY KEY AUTO_INCREMENT,
+    User_ID INT,
+    Product_ID INT,
+    ShoppingSessions_ID INT,
+    Quantity INT DEFAULT 1,
+    Added_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ShoppingSessions_ID) REFERENCES ShoppingSessions(ShoppingSessions_ID) ON DELETE CASCADE,
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE,
+    FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID) ON DELETE CASCADE
+);
+
+-- Orders Table
+CREATE TABLE Orders (
+    Order_ID INT PRIMARY KEY AUTO_INCREMENT,
+    User_ID INT,
+    Payment_ID INT,
+    Total_Amount DECIMAL(10, 2) NOT NULL,
+    Order_Status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled') DEFAULT 'Pending',
+    Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Updated_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE
+);
+
+
+-- Order_Items Table
+CREATE TABLE Order_Items (
+    Order_Item_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Order_ID INT,
+    Tests_ID INT,
+    Quantity INT NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID) ON DELETE CASCADE,
+    FOREIGN KEY (Tests_ID) REFERENCES Tests(Tests_ID) ON DELETE CASCADE
+);
+
+-- Payments Table
+CREATE TABLE Payments (
+    Payment_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Order_ID INT,
+    User_ID INT NOT NULL,
+    PaymentMethod ENUM('Credit Card', 'PayPal', 'UPI', 'Net Banking') NOT NULL,
+    Amount DECIMAL(10, 2) NOT NULL,
+    Payment_Status ENUM('Pending', 'Completed', 'Failed', 'Refunded') DEFAULT 'Pending',
+    Transaction_ID VARCHAR(255) UNIQUE,
+    Payment_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID) ON DELETE CASCADE,
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE
+);
+
+-- Information form 
+
