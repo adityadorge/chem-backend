@@ -109,6 +109,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://chem-frontend.netlify.app",
     "https://chem-backend.up.railway.app",   # backend URL
     "https://web-production-b36d45.up.railway.app",  # frontend URL
+    "https://chem-backend-92pt.onrender.com/"
 ]
 
 CORS_ALLOW_METHODS = [

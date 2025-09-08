@@ -4,15 +4,18 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+def otp_expiry_default():
+    return timezone.now() + timezone.timedelta(minutes=5)
+
 class EmailOTP(models.Model):
     email = models.EmailField() #change the email field to user foreign key 
     otp_hash = models.CharField(max_length=256)
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(default=timezone.now() + timezone.timedelta(minutes=5))
+    expires_at = models.DateTimeField(default=otp_expiry_default)
     used = models.BooleanField(default=False)
 
     def is_expired(self):
-        return timezone.now() > self.expires_at
+        return timezone.now() >= self.expires_at
  
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, full_name, password=None, **extra_fields):
