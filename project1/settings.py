@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "web-production-b36d45.up.railway.app",  # your Railway backend URL
     "chem-backend.up.railway.app",  
+    "chem-backend-92pt.onrender.com",
 ]
 
 
